@@ -1,4 +1,4 @@
-package com.timber.soft.mylivewallpaper.activity
+package com.timber.soft.mylivewallpaper.ui.activity
 
 import android.content.Intent
 import android.view.View

@@ -1,4 +1,4 @@
-package com.timber.soft.mylivewallpaper.fragment
+package com.timber.soft.mylivewallpaper.ui.fragment
 
 
 import android.os.Bundle
@@ -21,7 +21,6 @@ abstract class BaseFragment : Fragment() {
     }
 
     open fun initViews() {
-
     }
 
     abstract fun getFragmentContentView(): View
