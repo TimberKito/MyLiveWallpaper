@@ -62,6 +62,7 @@ class HomeFragment : BaseFragment() {
     }
 
     private fun initRecyclerView() {
+        wallpaperViewModel.updateWallpaper()
         homeItemAdapter =
             HomeItemAdapter(requireContext(), wallpaperDataList, object : OnHomeItemClickListener {
                 override fun onItemClick(position: Int, wallpaperData: WallpaperData) {

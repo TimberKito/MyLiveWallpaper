@@ -2,7 +2,6 @@ package com.timber.soft.mylivewallpaper.data
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.timber.soft.mylivewallpaper.tools.AppTools
 import com.timber.soft.mylivewallpaper.tools.AppTools.parseJsonFile
 import com.timber.soft.mylivewallpaper.tools.MyApplication
 import java.util.concurrent.atomic.AtomicBoolean
@@ -27,7 +26,7 @@ class WallpaperViewModel : ViewModel() {
             wallpaperDataList.clear()
             wallpaperPoolsList.clear()
             wallpaperPoolsList.addAll(getDataList())
-            val list = wallpaperPoolsList.subList(0, 40)
+            val list = wallpaperPoolsList.subList(0, 40).map { it }
             wallpaperDataList.addAll(list)
             wallpaperPoolsList.removeAll(list)
         } catch (e: Exception) {
@@ -44,7 +43,7 @@ class WallpaperViewModel : ViewModel() {
         }
         try {
             isLoading.set(true)
-            val list = wallpaperPoolsList.subList(0, 20)
+            val list = wallpaperPoolsList.subList(0, 20).map { it }
             wallpaperDataList.addAll(list)
             wallpaperPoolsList.removeAll(list)
         } catch (e: Exception) {
