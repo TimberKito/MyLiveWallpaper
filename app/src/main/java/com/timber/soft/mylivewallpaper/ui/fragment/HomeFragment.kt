@@ -1,5 +1,6 @@
 package com.timber.soft.mylivewallpaper.ui.fragment
 
+import android.content.Intent
 import android.util.Log
 import android.view.View
 import androidx.lifecycle.lifecycleScope
@@ -12,7 +13,9 @@ import com.timber.soft.mylivewallpaper.ui.adapter.HomeItemAdapter
 import com.timber.soft.mylivewallpaper.ui.listener.OnHomeItemClickListener
 import kotlinx.coroutines.Dispatchers
 import androidx.fragment.app.viewModels
+import com.timber.soft.mylivewallpaper.tools.AppFinalString
 import com.timber.soft.mylivewallpaper.tools.AppTools.onMain
+import com.timber.soft.mylivewallpaper.ui.activity.DetailActivity
 import kotlinx.coroutines.launch
 
 class HomeFragment : BaseFragment() {
@@ -66,8 +69,9 @@ class HomeFragment : BaseFragment() {
         homeItemAdapter =
             HomeItemAdapter(requireContext(), wallpaperDataList, object : OnHomeItemClickListener {
                 override fun onItemClick(position: Int, wallpaperData: WallpaperData) {
-//                       val intent = Intent(requireContext())
-                    Log.d("home_item_root", "item has been click!")
+                    val intent = Intent(requireContext(), DetailActivity::class.java)
+                    intent.putExtra(AppFinalString.KEY_EXTRA, wallpaperData)
+                    startActivity(intent)
                 }
             })
         binding.homeRecyclerview.run {

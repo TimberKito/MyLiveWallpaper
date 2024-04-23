@@ -4,4 +4,6 @@
     <string name="main_home">Home</string>
     <string name="main_collect">Collect</string>
     <string name="main_setting">Set</string>
+
+    <string name="details_set_wallpaper">Set Wallpaper</string>
 </resources>
