@@ -78,7 +78,7 @@
         android:padding="12dp"
         android:paddingStart="16dp"
         android:src="@drawable/svg_play"
-        android:visibility="visible" />
+        android:visibility="invisible" />
 
     <FrameLayout
         android:id="@+id/details_flPlay"

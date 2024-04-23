@@ -73,5 +73,11 @@ dependencies {
     //viewModel初始化用
     implementation(libs.activity.ktx)
     implementation(libs.fragment.ktx)
+    // progress bar
+    implementation(libs.com.akexorcist.progress.bar)
+
+    // RxBinding
+    implementation(libs.jakewharton.rxbinding4)
+
 
 }

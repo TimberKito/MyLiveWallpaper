@@ -10,8 +10,10 @@ material = "1.11.0"
 activity = "1.8.0"
 activity-ktx = "1.9.0"
 fragment-ktx = "1.6.2"
+rxbinding = "4.0.0"
 constraintlayout = "2.1.4"
 lifecycle = "2.7.0"
+progress-bar = "2.1.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -25,6 +27,8 @@ lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx
 activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activity-ktx" }
 fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragment-ktx" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+jakewharton-rxbinding4 = { module = "com.jakewharton.rxbinding4:rxbinding", version.ref = "rxbinding" }
+com-akexorcist-progress-bar = { group = "com.akexorcist", name = "round-corner-progress-bar", version.ref = "progress-bar" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

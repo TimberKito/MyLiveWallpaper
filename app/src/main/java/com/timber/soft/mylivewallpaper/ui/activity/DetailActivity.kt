@@ -14,11 +14,14 @@ import com.bumptech.glide.request.target.Target
 import com.timber.soft.mylivewallpaper.data.WallpaperData
 import com.timber.soft.mylivewallpaper.databinding.ActivityDetailsBinding
 import com.timber.soft.mylivewallpaper.tools.AppFinalString
+import com.timber.soft.mylivewallpaper.tools.AppTools.isExist
+import com.timber.soft.mylivewallpaper.ui.customerView.DownLoadDialog
 
 class DetailActivity : BaseActivity(), View.OnClickListener {
 
     private lateinit var binding: ActivityDetailsBinding
     private lateinit var wallpaperData: WallpaperData
+    private lateinit var downDialog: DownLoadDialog
     override fun getActivityContentView(): View {
         binding = ActivityDetailsBinding.inflate(layoutInflater)
         return binding.root
@@ -89,9 +92,26 @@ class DetailActivity : BaseActivity(), View.OnClickListener {
             }
 
             binding.detailsPlayButton -> {
-                Log.e("onclick", "detailsPlayButton has been click!")
+                if (isExist()) {
+                    playVideo()
+                } else {
+                    showDownloadDialog()
+                }
             }
         }
     }
+
+    private fun showDownloadDialog() {
+
+    }
+
+    private fun playVideo() {
+
+    }
+
+    private fun isExist(): Boolean {
+        return isExist(wallpaperData.preview)
+    }
+
 
 }

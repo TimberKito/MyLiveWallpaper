@@ -15,5 +15,5 @@ data class WallpaperData(
     val id: Int = 0,
     val classId: String? = null,
     var isCollect: Boolean = false,
-    var downloadUrl: String? = null,
+    var downloadUrl: String? = null
 ) : Serializable
