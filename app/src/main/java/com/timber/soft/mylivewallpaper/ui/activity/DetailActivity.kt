@@ -1,6 +1,8 @@
 package com.timber.soft.mylivewallpaper.ui.activity
 
+import android.graphics.Color
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -11,11 +13,15 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import com.timber.soft.mylivewallpaper.data.AppDatabase
 import com.timber.soft.mylivewallpaper.data.WallpaperData
 import com.timber.soft.mylivewallpaper.databinding.ActivityDetailsBinding
 import com.timber.soft.mylivewallpaper.tools.AppFinalString
 import com.timber.soft.mylivewallpaper.tools.AppTools.isExist
 import com.timber.soft.mylivewallpaper.ui.customerView.DownLoadDialog
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class DetailActivity : BaseActivity(), View.OnClickListener {
 
@@ -28,8 +34,15 @@ class DetailActivity : BaseActivity(), View.OnClickListener {
     }
 
     override fun initViews() {
-        super.initViews()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.decorView.systemUiVisibility =
+                (View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE)
+            window.statusBarColor = Color.TRANSPARENT
+        }
+
         wallpaperData = intent.getSerializableExtra(AppFinalString.KEY_EXTRA) as WallpaperData
+
         initButton()
         initPreImg()
 
@@ -38,8 +51,7 @@ class DetailActivity : BaseActivity(), View.OnClickListener {
     private fun initPreImg() {
         Glide.with(this).load(wallpaperData.thumbnail)
             .transition(DrawableTransitionOptions.withCrossFade())
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .listener(object : RequestListener<Drawable> {
+            .diskCacheStrategy(DiskCacheStrategy.ALL).listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(
                     e: GlideException?,
                     model: Any?,
@@ -75,6 +87,7 @@ class DetailActivity : BaseActivity(), View.OnClickListener {
         binding.detailsCollect.setOnClickListener(this)
         binding.detailsSet.setOnClickListener(this)
         binding.detailsPlayButton.setOnClickListener(this)
+        binding.detailsCollect.isSelected = wallpaperData.isCollect
     }
 
     override fun onClick(v: View?) {
@@ -88,7 +101,7 @@ class DetailActivity : BaseActivity(), View.OnClickListener {
             }
 
             binding.detailsCollect -> {
-                Log.e("onclick", "detailsCollect has been click!")
+                setCollect()
             }
 
             binding.detailsPlayButton -> {
@@ -101,12 +114,37 @@ class DetailActivity : BaseActivity(), View.OnClickListener {
         }
     }
 
-    private fun showDownloadDialog() {
+    private fun setCollect() {
+        if (!binding.detailsCollect.isSelected) {
+            binding.detailsCollect.isSelected = !binding.detailsCollect.isSelected
+            Toast.makeText(
+                this@DetailActivity, "You have collected this sound.", Toast.LENGTH_SHORT
+            ).show()
+            CoroutineScope(Dispatchers.IO).launch {
+                AppDatabase.dataBase.getWallpaperDao().insertData(wallpaperData.apply {
+                    isCollect = binding.detailsCollect.isSelected
+                })
+            }
 
+        } else {
+            binding.detailsCollect.isSelected = !binding.detailsCollect.isSelected
+            Toast.makeText(
+                this@DetailActivity, "You have unfavorite this sound.", Toast.LENGTH_SHORT
+            ).show()
+            CoroutineScope(Dispatchers.IO).launch {
+                AppDatabase.dataBase.getWallpaperDao().deleteData(wallpaperData.apply {
+                    isCollect = binding.detailsCollect.isSelected
+                })
+            }
+        }
+    }
+
+    private fun showDownloadDialog() {
+        Log.e("file_play", "file is null!")
     }
 
     private fun playVideo() {
-
+        Log.e("file_play", "file is exist!")
     }
 
     private fun isExist(): Boolean {

@@ -21,6 +21,7 @@ abstract class BaseFragment : Fragment() {
     }
 
     open fun initViews() {
+
     }
 
     abstract fun getFragmentContentView(): View

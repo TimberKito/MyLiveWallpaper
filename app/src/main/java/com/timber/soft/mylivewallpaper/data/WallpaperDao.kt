@@ -8,7 +8,7 @@ import androidx.room.Update
 
 @Dao
 interface WallpaperDao {
-    @Query("select * from wallpaper where isCollect = :collect ")
+    @Query("select * from t_wallpaper where isCollect = :collect ")
     suspend fun getCollectData(collect: Boolean = true): List<WallpaperData>
 
     @Update

@@ -20,7 +20,7 @@ class SettingFragment : BaseFragment() {
     override fun initViews() {
         super.initViews()
         binding.setLayoutRating.setOnClickListener {
-            //TODO:no implement
+            RateFragment.newInstance(0, 0).show(childFragmentManager, "")
         }
         binding.setLayoutShare.setOnClickListener {
             val url = getString(R.string.set_shop_link) + (activity?.packageName ?: "")
