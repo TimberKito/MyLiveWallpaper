@@ -12,7 +12,7 @@ data class WallpaperData(
     val title: String,
 
     @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+    var id: Int = 0,
     val classId: String? = null,
     var isCollect: Boolean = false,
     var downloadUrl: String? = null

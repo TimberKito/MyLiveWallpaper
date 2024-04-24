@@ -34,6 +34,7 @@ class MainActivity :
         binding.mainViewpager.run {
             adapter = MainViewPagerAdapter(viewPagerFragments, supportFragmentManager)
             addOnPageChangeListener(this@MainActivity)
+            setOffscreenPageLimit(0)
         }
         setTabSelect(0)
     }
