@@ -33,12 +33,12 @@ class StartActivity : BaseActivity() {
     private fun startMainActivity() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
-        finish() // 结束当前的启动页
+        finish()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        coroutineScope.cancel() // 取消协程以防止内存泄漏
+        coroutineScope.cancel()
     }
 
 }

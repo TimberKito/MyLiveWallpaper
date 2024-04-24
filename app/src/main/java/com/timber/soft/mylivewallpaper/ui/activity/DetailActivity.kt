@@ -58,7 +58,6 @@ class DetailActivity : BaseActivity(), View.OnClickListener {
                     target: Target<Drawable>?,
                     isFirstResource: Boolean
                 ): Boolean {
-                    // 加载失败时的处理
                     binding.detailsProgressbar.visibility = View.INVISIBLE
                     binding.detailsLoadingErr.visibility = View.VISIBLE
                     Toast.makeText(
@@ -74,7 +73,6 @@ class DetailActivity : BaseActivity(), View.OnClickListener {
                     dataSource: DataSource?,
                     isFirstResource: Boolean
                 ): Boolean {
-                    // 图片加载完成时的处理
                     binding.detailsProgressbar.visibility = View.INVISIBLE
                     binding.detailsPlayButton.visibility = View.VISIBLE
                     return false
@@ -150,6 +148,5 @@ class DetailActivity : BaseActivity(), View.OnClickListener {
     private fun isExist(): Boolean {
         return isExist(wallpaperData.preview)
     }
-
 
 }

@@ -40,7 +40,7 @@ object AppTools {
             } else if (Build.VERSION.SDK_INT < 29) {
                 dirName = MyApplication.appContext.getExternalFilesDir(DIR_FILE_NAME)!!.absolutePath
             }
-        } else {//外部存储不可用
+        } else {
             dirName = MyApplication.appContext.filesDir.absolutePath
         }
         return dirName
