@@ -10,23 +10,11 @@ import com.timber.soft.mylivewallpaper.databinding.ViewDownloaddialogBinding
 import com.timber.soft.mylivewallpaper.tools.AppTools.throttleClicks
 import java.util.concurrent.atomic.AtomicInteger
 
-/**
- * TODO : no implement
- */
 class DownLoadDialog(
     private val context: Context,
     private val url: String,
-    private val title: String = "",
-    init: DownLoadDialog.() -> Unit
 ) : Dialog(context, R.style.DownLoadDialog) {
     private lateinit var binding: ViewDownloaddialogBinding
-    var onDownloadSuccess: (() -> Unit)? = null
-    var onDownloadFailed: (() -> Unit)? = null
-    private var mCount: AtomicInteger = AtomicInteger(0)
-
-    init {
-        init()
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,13 +31,10 @@ class DownLoadDialog(
     }
 
     private fun startDownload() {
-        binding.dialogProgressbar.progress = 0f
+
     }
 
     private fun initView() {
-        if (!TextUtils.isEmpty(title)) {
-            binding.dialogText.text = title
-        }
         binding.dialogIvClose.throttleClicks {
             dismiss()
         }

@@ -2,10 +2,13 @@ package com.timber.soft.mylivewallpaper.ui.activity
 
 import android.graphics.Color
 import android.graphics.drawable.Drawable
+import android.media.MediaPlayer
 import android.os.Build
 import android.util.Log
+import android.view.SurfaceHolder
 import android.view.View
 import android.widget.Toast
+import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -13,11 +16,12 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import com.timber.soft.mylivewallpaper.R
 import com.timber.soft.mylivewallpaper.data.AppDatabase
 import com.timber.soft.mylivewallpaper.data.WallpaperData
 import com.timber.soft.mylivewallpaper.databinding.ActivityDetailsBinding
 import com.timber.soft.mylivewallpaper.tools.AppFinalString
-import com.timber.soft.mylivewallpaper.tools.AppTools.isExist
+import com.timber.soft.mylivewallpaper.tools.AppTools.glideDownload
 import com.timber.soft.mylivewallpaper.ui.customerView.DownLoadDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -28,6 +32,9 @@ class DetailActivity : BaseActivity(), View.OnClickListener {
     private lateinit var binding: ActivityDetailsBinding
     private lateinit var wallpaperData: WallpaperData
     private lateinit var downDialog: DownLoadDialog
+    private var mediaPlayer: MediaPlayer? = null
+    private lateinit var videoUrl: String
+    private var isDownload = false
     override fun getActivityContentView(): View {
         binding = ActivityDetailsBinding.inflate(layoutInflater)
         return binding.root
@@ -85,6 +92,7 @@ class DetailActivity : BaseActivity(), View.OnClickListener {
         binding.detailsCollect.setOnClickListener(this)
         binding.detailsSet.setOnClickListener(this)
         binding.detailsPlayButton.setOnClickListener(this)
+        binding.detailsVideoBack.setOnClickListener(this)
         binding.detailsCollect.isSelected = wallpaperData.isCollect
     }
 
@@ -103,13 +111,30 @@ class DetailActivity : BaseActivity(), View.OnClickListener {
             }
 
             binding.detailsPlayButton -> {
-                if (isExist()) {
+                if (isDownload) {
+                    binding.detailsPlayButton.isVisible = false
                     playVideo()
                 } else {
+                    binding.detailsPlayButton.isVisible = false
+                    binding.detailsProgressbar.isVisible = true
                     showDownloadDialog()
                 }
             }
+
+            binding.detailsVideoBack -> {
+                stopVideo()
+            }
         }
+    }
+
+    private fun stopVideo() {
+        try {
+            mediaPlayer?.stop()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        binding.detailsFlPlay.isVisible = false
+        binding.detailsPlayButton.isVisible = true
     }
 
     private fun setCollect() {
@@ -138,15 +163,119 @@ class DetailActivity : BaseActivity(), View.OnClickListener {
     }
 
     private fun showDownloadDialog() {
-        Log.e("file_play", "file is null!")
+        wallpaperData.preview.let {
+            glideDownload(this, it) { file ->
+                if (file == null) {
+                    isDownload = false
+                    Toast.makeText(
+                        this@DetailActivity, "Sorry, the download failed.", Toast.LENGTH_SHORT
+                    ).show()
+                    binding.detailsProgressbar.isVisible = false
+                } else {
+                    binding.detailsProgressbar.isVisible = false
+                    file.absolutePath.let { path ->
+//                        mediaPlayer.setDataSource(path)
+//                        mediaPlayer.prepare()
+                        videoUrl = path
+                        isDownload = true
+                        CoroutineScope(Dispatchers.IO).launch {
+                            AppDatabase.dataBase.getWallpaperDao().insertData(wallpaperData.apply {
+                                downloadUrl = path
+                            })
+                        }
+                        playVideo()
+                    }
+                }
+            }
+        }
     }
 
     private fun playVideo() {
-        Log.e("file_play", "file is exist!")
+        try {
+            if (mediaPlayer == null) {
+                mediaPlayer = MediaPlayer()
+                binding.detailsSurfaceVideo.holder.addCallback(object : SurfaceHolder.Callback {
+                    override fun surfaceCreated(holder: SurfaceHolder) {
+                        try {
+                            mediaPlayer?.reset()
+                            mediaPlayer?.setDataSource(videoUrl)
+                            mediaPlayer?.setDisplay(holder)
+                            mediaPlayer?.isLooping = true
+                            mediaPlayer?.setVolume(0f, 0f)
+                            mediaPlayer?.setOnPreparedListener {
+                                try {
+                                    it.start()
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                }
+                            }
+                            mediaPlayer?.prepareAsync()
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    }
+
+                    override fun surfaceChanged(
+                        holder: SurfaceHolder,
+                        format: Int,
+                        width: Int,
+                        height: Int
+                    ) {
+                    }
+
+                    override fun surfaceDestroyed(holder: SurfaceHolder) {
+                    }
+
+                })
+            } else {
+                mediaPlayer?.reset()
+                mediaPlayer?.setDataSource(videoUrl)
+                mediaPlayer?.isLooping = true
+                mediaPlayer?.setVolume(0f, 0f)
+                mediaPlayer?.prepare()
+            }
+            binding.detailsFlPlay.isVisible = true
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
-    private fun isExist(): Boolean {
-        return isExist(wallpaperData.preview)
+    override fun onDestroy() {
+        super.onDestroy()
+        mediaPlayer?.stop()
+        mediaPlayer?.release()
+        mediaPlayer = null
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        if (binding.detailsFlPlay.isVisible) {
+            stopVideo()
+            return
+        }
+        finish()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (binding.detailsFlPlay.isVisible) {
+            try {
+                stopVideo()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (binding.detailsFlPlay.isVisible) {
+            try {
+                mediaPlayer?.start()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
 }
