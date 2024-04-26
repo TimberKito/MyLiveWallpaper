@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MyLiveWallpaper</string>
+    <string name="app_name">Live Backgrounds Wallpaper</string>
 
     <string name="main_home">Home</string>
     <string name="main_collect">Collect</string>
@@ -9,7 +9,7 @@
     <string name="set_score">Rate us</string>
     <string name="set_share">Share us</string>
     <string name="set_shop_link">https://play.google.com/store/apps/details?id=</string>
-    <string name="set_rate_us_content">We hope this app is useful for you, if it does, would youplease give us a 5 sar and a mice revtew on Google Play, it really helps!</string>
+    <string name="set_rate_us_content">Please share this app and give us 5 stars if this app was helpful to you, thank you!</string>
     <string name="set_cancel">CANCEL</string>
     <string name="set_rate_it">RATE IT</string>
     <string name="set_setting_delete">Clear All My Favorites</string>
@@ -18,6 +18,7 @@
 
 
     <string name="details_set_wallpaper">Set Wallpaper</string>
+    <string name="details_setting_wallpaper">Setting wallpaper ...</string>
     <string name="video_loading">Loading video...</string>
 
 

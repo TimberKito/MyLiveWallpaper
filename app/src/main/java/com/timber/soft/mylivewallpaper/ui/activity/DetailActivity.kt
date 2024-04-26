@@ -1,10 +1,13 @@
 package com.timber.soft.mylivewallpaper.ui.activity
 
+import android.app.WallpaperManager
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.media.MediaPlayer
 import android.os.Build
-import android.util.Log
 import android.view.SurfaceHolder
 import android.view.View
 import android.widget.Toast
@@ -16,22 +19,21 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
-import com.timber.soft.mylivewallpaper.R
 import com.timber.soft.mylivewallpaper.data.AppDatabase
 import com.timber.soft.mylivewallpaper.data.WallpaperData
 import com.timber.soft.mylivewallpaper.databinding.ActivityDetailsBinding
+import com.timber.soft.mylivewallpaper.service.VideoWallpaperService
 import com.timber.soft.mylivewallpaper.tools.AppFinalString
 import com.timber.soft.mylivewallpaper.tools.AppTools.glideDownload
-import com.timber.soft.mylivewallpaper.ui.customerView.DownLoadDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+
 
 class DetailActivity : BaseActivity(), View.OnClickListener {
 
     private lateinit var binding: ActivityDetailsBinding
     private lateinit var wallpaperData: WallpaperData
-    private lateinit var downDialog: DownLoadDialog
     private var mediaPlayer: MediaPlayer? = null
     private lateinit var videoUrl: String
     private var isDownload = false
@@ -103,7 +105,14 @@ class DetailActivity : BaseActivity(), View.OnClickListener {
             }
 
             binding.detailsSet -> {
-                Log.e("onclick", "detailsSet has been click!")
+                if (isDownload) {
+                    binding.detailsPlayButton.isVisible = false
+                    setWallpaper(videoUrl)
+                } else {
+                    binding.detailsPlayButton.isVisible = false
+                    binding.detailsProgressbar.isVisible = true
+                    downloadPaper()
+                }
             }
 
             binding.detailsCollect -> {
@@ -125,6 +134,56 @@ class DetailActivity : BaseActivity(), View.OnClickListener {
                 stopVideo()
             }
         }
+    }
+
+    private fun downloadPaper() {
+        wallpaperData.preview.let {
+            glideDownload(this, it) { file ->
+                if (file == null) {
+                    isDownload = false
+                    Toast.makeText(
+                        this@DetailActivity, "Sorry, the download failed.", Toast.LENGTH_SHORT
+                    ).show()
+                    binding.detailsProgressbar.isVisible = false
+                } else {
+                    binding.detailsProgressbar.isVisible = false
+                    file.absolutePath.let { path ->
+                        videoUrl = path
+                        isDownload = true
+                        CoroutineScope(Dispatchers.IO).launch {
+                            AppDatabase.dataBase.getWallpaperDao().insertData(wallpaperData.apply {
+                                downloadUrl = path
+                            })
+                        }
+                        setWallpaper(videoUrl)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun setWallpaper(videoUrl: String) {
+//        binding.detailsCoverView.isVisible = true
+
+
+        val instance = WallpaperManager.getInstance(this)
+        try {
+            instance.clear()
+        }catch (e:Exception){
+
+        }
+        val prefs =
+            applicationContext.getSharedPreferences(AppFinalString.PREFS_NAME, Context.MODE_PRIVATE)
+        val editor = prefs.edit()
+        editor.putString(AppFinalString.KEY_SP, videoUrl)
+        editor.apply()
+
+        val intent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER)
+        intent.putExtra(
+            WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT,
+            ComponentName(this, VideoWallpaperService::class.java)
+        )
+        startActivity(intent)
     }
 
     private fun stopVideo() {
@@ -155,7 +214,7 @@ class DetailActivity : BaseActivity(), View.OnClickListener {
                 this@DetailActivity, "You have unfavorite this sound.", Toast.LENGTH_SHORT
             ).show()
             CoroutineScope(Dispatchers.IO).launch {
-                AppDatabase.dataBase.getWallpaperDao().deleteData(wallpaperData.apply {
+                AppDatabase.dataBase.getWallpaperDao().updateData(wallpaperData.apply {
                     isCollect = binding.detailsCollect.isSelected
                 })
             }
@@ -171,11 +230,10 @@ class DetailActivity : BaseActivity(), View.OnClickListener {
                         this@DetailActivity, "Sorry, the download failed.", Toast.LENGTH_SHORT
                     ).show()
                     binding.detailsProgressbar.isVisible = false
+                    binding.detailsPlayButton.isVisible = true
                 } else {
                     binding.detailsProgressbar.isVisible = false
                     file.absolutePath.let { path ->
-//                        mediaPlayer.setDataSource(path)
-//                        mediaPlayer.prepare()
                         videoUrl = path
                         isDownload = true
                         CoroutineScope(Dispatchers.IO).launch {
@@ -216,10 +274,7 @@ class DetailActivity : BaseActivity(), View.OnClickListener {
                     }
 
                     override fun surfaceChanged(
-                        holder: SurfaceHolder,
-                        format: Int,
-                        width: Int,
-                        height: Int
+                        holder: SurfaceHolder, format: Int, width: Int, height: Int
                     ) {
                     }
 

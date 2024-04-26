@@ -5,4 +5,5 @@
     <color name="theme_color_dark">#3095DE</color>
     <color name="theme_color_light">#80BFEFFF</color>
     <color name="theme_color_mid">#B4DEFE</color>
+    <color name="cover_color">#BF000000</color>
 </resources>

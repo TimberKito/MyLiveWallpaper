@@ -97,13 +97,30 @@
             android:id="@+id/details_video_back"
             android:layout_width="54dp"
             android:layout_height="54dp"
-            android:layout_gravity="start"
-            android:layout_marginStart="24dp"
+            android:layout_gravity="end"
             android:layout_marginTop="46dp"
+            android:layout_marginEnd="24dp"
             android:background="@drawable/shape_circular"
             android:padding="12dp"
             android:src="@drawable/svg_back" />
     </FrameLayout>
+
+    <RelativeLayout
+        android:id="@+id/details_cover_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/cover_color"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/details_setting_wallpaper"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
 
 
 </FrameLayout>

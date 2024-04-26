@@ -47,7 +47,7 @@
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@mipmap/ic_launcher" />
+                    android:src="@mipmap/icon" />
             </androidx.cardview.widget.CardView>
 
             <!--AppName-->

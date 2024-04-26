@@ -13,6 +13,9 @@ interface WallpaperDao {
     @Query("delete from t_wallpaper")
     suspend fun deleteAllData()
 
+    @Query("update t_wallpaper set isCollect = 0")
+    suspend fun deleteAllCollect()
+
     @Query("select * from t_wallpaper where isCollect = :collect ")
     suspend fun getCollectData(collect: Boolean = true): List<WallpaperData>
 

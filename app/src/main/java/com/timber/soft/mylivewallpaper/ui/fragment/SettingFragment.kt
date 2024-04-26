@@ -63,7 +63,7 @@ class SettingFragment : BaseFragment() {
         binding.setLayoutDelete.setOnClickListener() {
 
             CoroutineScope(Dispatchers.IO).launch {
-                AppDatabase.dataBase.getWallpaperDao().deleteAllData()
+                AppDatabase.dataBase.getWallpaperDao().deleteAllCollect()
             }
             sendDatabaseUpdatedBroadcast()
             Toast.makeText(
